@@ -403,6 +403,7 @@
   const tl = gsap.timeline({ onComplete: () => {
     lenis.start(); loader.remove();
     gsap.set(main, { clearProps: 'transform,filter,transformOrigin' });
+    ScrollTrigger.refresh(); // positions were measured while main was scaled up
   } });
   const holeR = () => Math.hypot(innerWidth, innerHeight) / 2 + 40;
   tl.to(warp, { speed: 1.2, duration: reduce ? 0 : .9, ease: 'power2.in' })
