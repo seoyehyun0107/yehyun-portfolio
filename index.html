@@ -356,63 +356,73 @@
 
   /* ---------- loader → intro ---------- */
   const loader = document.querySelector('.loader');
-  gsap.set('.hero .char', { yPercent: 110 });
-  gsap.set('.intro-line', { yPercent: 110 });
-  lenis.stop();
+  // coming back from a project page: skip the intro and return to where the visitor left
+  let returnY = null;
+  try { returnY = sessionStorage.getItem('pf-return'); sessionStorage.removeItem('pf-return'); } catch (_) {}
+  if (returnY !== null) {
+    loader.remove();
+    const jump = () => { ScrollTrigger.refresh(); lenis.scrollTo(+returnY, { immediate: true, force: true }); };
+    requestAnimationFrame(jump);
+    addEventListener('load', jump, { once: true });
+  } else {
+    gsap.set('.hero .char', { yPercent: 110 });
+    gsap.set('.intro-line', { yPercent: 110 });
+    lenis.stop();
 
-  // tunnel: rings + streaks rushing toward the centre
-  const cv = loader.querySelector('canvas'), ctx = cv.getContext('2d');
-  const warp = { speed: .12 };
-  let W, H, R, phase = 0, last = performance.now();
-  const resize = () => {
-    const d = Math.min(devicePixelRatio, 2);
-    W = cv.width = innerWidth * d; H = cv.height = innerHeight * d;
-    R = Math.hypot(W, H) / 2;
-  };
-  resize(); addEventListener('resize', resize);
-  const streaks = Array.from({ length: 140 }, () => ({ a: Math.random() * Math.PI * 2, d: Math.random(), s: .4 + Math.random() * .8 }));
-  const RINGS = 18;
-  const draw = now => {
-    if (!loader.isConnected) return;
-    const dt = Math.min(.05, (now - last) / 1000); last = now;
-    phase += dt * warp.speed;
-    ctx.clearRect(0, 0, W, H);
-    const cx = W / 2, cy = H / 2;
-    for (let i = 0; i < RINGS; i++) {
-      const f = ((i / RINGS) - phase) % 1, k = f < 0 ? f + 1 : f; // 1 = edge, 0 = centre
-      const r = R * k * k;
-      ctx.strokeStyle = `rgba(255,255,255,${.04 + (1 - k) * .22})`;
-      ctx.lineWidth = Math.max(.5, k * 2);
-      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-    }
-    ctx.lineCap = 'round';
-    streaks.forEach(p => {
-      p.d -= dt * warp.speed * p.s * 2.2;
-      if (p.d <= .02) { p.d = 1; p.a = Math.random() * Math.PI * 2; }
-      const r1 = R * p.d * p.d, r2 = R * Math.min(1.2, (p.d + .04 + warp.speed * .08) ** 2);
-      const ca = Math.cos(p.a), sa = Math.sin(p.a);
-      ctx.strokeStyle = `rgba(255,255,255,${.12 + (1 - p.d) * .5})`;
-      ctx.lineWidth = 1 + p.d * 1.5;
-      ctx.beginPath(); ctx.moveTo(cx + ca * r1, cy + sa * r1); ctx.lineTo(cx + ca * r2, cy + sa * r2); ctx.stroke();
-    });
+    // tunnel: rings + streaks rushing toward the centre
+    const cv = loader.querySelector('canvas'), ctx = cv.getContext('2d');
+    const warp = { speed: .12 };
+    let W, H, R, phase = 0, last = performance.now();
+    const resize = () => {
+      const d = Math.min(devicePixelRatio, 2);
+      W = cv.width = innerWidth * d; H = cv.height = innerHeight * d;
+      R = Math.hypot(W, H) / 2;
+    };
+    resize(); addEventListener('resize', resize);
+    const streaks = Array.from({ length: 140 }, () => ({ a: Math.random() * Math.PI * 2, d: Math.random(), s: .4 + Math.random() * .8 }));
+    const RINGS = 18;
+    const draw = now => {
+      if (!loader.isConnected) return;
+      const dt = Math.min(.05, (now - last) / 1000); last = now;
+      phase += dt * warp.speed;
+      ctx.clearRect(0, 0, W, H);
+      const cx = W / 2, cy = H / 2;
+      for (let i = 0; i < RINGS; i++) {
+        const f = ((i / RINGS) - phase) % 1, k = f < 0 ? f + 1 : f; // 1 = edge, 0 = centre
+        const r = R * k * k;
+        ctx.strokeStyle = `rgba(255,255,255,${.04 + (1 - k) * .22})`;
+        ctx.lineWidth = Math.max(.5, k * 2);
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.lineCap = 'round';
+      streaks.forEach(p => {
+        p.d -= dt * warp.speed * p.s * 2.2;
+        if (p.d <= .02) { p.d = 1; p.a = Math.random() * Math.PI * 2; }
+        const r1 = R * p.d * p.d, r2 = R * Math.min(1.2, (p.d + .04 + warp.speed * .08) ** 2);
+        const ca = Math.cos(p.a), sa = Math.sin(p.a);
+        ctx.strokeStyle = `rgba(255,255,255,${.12 + (1 - p.d) * .5})`;
+        ctx.lineWidth = 1 + p.d * 1.5;
+        ctx.beginPath(); ctx.moveTo(cx + ca * r1, cy + sa * r1); ctx.lineTo(cx + ca * r2, cy + sa * r2); ctx.stroke();
+      });
+      requestAnimationFrame(draw);
+    };
     requestAnimationFrame(draw);
-  };
-  requestAnimationFrame(draw);
 
-  const main = document.querySelector('main');
-  const tl = gsap.timeline({ onComplete: () => {
-    lenis.start(); loader.remove();
-    gsap.set(main, { clearProps: 'transform,filter,transformOrigin' });
-    ScrollTrigger.refresh(); // positions were measured while main was scaled up
-  } });
-  const holeR = () => Math.hypot(innerWidth, innerHeight) / 2 + 40;
-  tl.to(warp, { speed: 1.2, duration: reduce ? 0 : .9, ease: 'power2.in' })
-    .to(warp, { speed: 3.5, duration: .35, ease: 'power3.in' })
-    .fromTo(main, { scale: 1.35, filter: 'blur(14px)', transformOrigin: () => `50% ${scrollY + innerHeight / 2}px` },
-      { scale: 1, filter: 'blur(0px)', duration: reduce ? 0 : 1.1, ease: 'expo.out' }, '-=.1')
-    .fromTo(loader, { '--r': '0px' }, { '--r': () => holeR() + 'px', duration: reduce ? 0 : .9, ease: 'expo.inOut' }, '<-.2')
-    .to('.intro-line', { yPercent: 0, duration: 1.1, stagger: .08, ease: 'expo.out' }, '-=.55')
-    .to('.hero .char', { yPercent: 0, duration: 1.2, stagger: .035, ease: 'expo.out' }, '<.1');
+    const main = document.querySelector('main');
+    const tl = gsap.timeline({ onComplete: () => {
+      lenis.start(); loader.remove();
+      gsap.set(main, { clearProps: 'transform,filter,transformOrigin' });
+      ScrollTrigger.refresh(); // positions were measured while main was scaled up
+    } });
+    const holeR = () => Math.hypot(innerWidth, innerHeight) / 2 + 40;
+    tl.to(warp, { speed: 1.2, duration: reduce ? 0 : .9, ease: 'power2.in' })
+      .to(warp, { speed: 3.5, duration: .35, ease: 'power3.in' })
+      .fromTo(main, { scale: 1.35, filter: 'blur(14px)', transformOrigin: () => `50% ${scrollY + innerHeight / 2}px` },
+        { scale: 1, filter: 'blur(0px)', duration: reduce ? 0 : 1.1, ease: 'expo.out' }, '-=.1')
+      .fromTo(loader, { '--r': '0px' }, { '--r': () => holeR() + 'px', duration: reduce ? 0 : .9, ease: 'expo.inOut' }, '<-.2')
+      .to('.intro-line', { yPercent: 0, duration: 1.1, stagger: .08, ease: 'expo.out' }, '-=.55')
+      .to('.hero .char', { yPercent: 0, duration: 1.2, stagger: .035, ease: 'expo.out' }, '<.1');
+  }
 
   /* ---------- hero parallax out ---------- */
   gsap.to('.hero__title', {
@@ -440,6 +450,7 @@
       img.style.setProperty('--my', y * 100 + '%');
     });
     if (card.getAttribute('href') === '#') card.addEventListener('click', e => e.preventDefault());
+    else card.addEventListener('click', () => { try { sessionStorage.setItem('pf-return', scrollY); } catch (_) {} });
   });
 
   /* ---------- about headline reveal ---------- */
