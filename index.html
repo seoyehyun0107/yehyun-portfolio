@@ -6,7 +6,7 @@
 <title>Yehyun Seo — UI/UX & BX Design</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200..800&family=Inter:wght@100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <style>
   :root{
@@ -86,9 +86,14 @@
   }
   .hero__title{
     margin-top:auto; margin-bottom:clamp(60px, 12vh, 150px); align-self:flex-end; text-align:right;
-    font-size:clamp(64px, 11.4vw, 164px); font-weight:600; line-height:.86; letter-spacing:-.045em;
-    text-transform:uppercase;
+    font-size:clamp(56px, 8.6vw, 124px);
   }
+  .hero__title, .about__title{
+    font-family:"Inter",sans-serif; font-weight:600; line-height:1; letter-spacing:-.005em;
+    text-transform:uppercase; color:var(--ink);
+  }
+  .hero__title .line-mask + .line-mask, .about__title .line-mask + .line-mask{margin-top:-.2em}
+  .hero__title .line-mask > span, .about__title .line-mask > span{padding-right:.03em}
   .line-mask{display:block; overflow:hidden; padding-bottom:.04em}
   .line-mask > span{display:inline-block}
   .char{display:inline-block; will-change:transform, font-variation-settings; font-variation-settings:"wght" 600}
@@ -160,7 +165,7 @@
     display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:40px;
   }
   .about__title{
-    font-size:clamp(52px, 7.1vw, 102px); font-weight:600; line-height:.88; letter-spacing:-.045em; text-transform:uppercase;
+    font-size:clamp(48px, 6.9vw, 100px);
   }
   .about__body{max-width:500px; font-family:"Pretendard Variable",Pretendard,sans-serif; letter-spacing:-.02em}
   .about__body h3{font-size:clamp(17px,1.4vw,20px); font-weight:600; margin-bottom:18px}
@@ -409,7 +414,7 @@
 
   /* ---------- hero parallax out ---------- */
   gsap.to('.hero__title', {
-    yPercent: -35, opacity: .15, ease: 'none',
+    yPercent: -35, ease: 'none',
     scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
   });
   gsap.to('.hero__intro', {
