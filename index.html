@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yehyun Seo — UI/UX & BX Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#111111;
+    --ink-2:#292929;
+    --mute:#848484;
+    --mute-2:#999999;
+    --line:#EBEBEB;
+    --ph:#B0B3C2;
+    --pad:clamp(16px, 3.6vw, 52px);
+    --ease: cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{ -webkit-font-smoothing:antialiased; }
+  html.lenis, html.lenis body{height:auto}
+  .lenis.lenis-smooth{scroll-behavior:auto !important}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Inter Tight","Pretendard Variable",Pretendard,system-ui,sans-serif;
+    letter-spacing:-0.01em; overflow-x:hidden;
+  }
+  @media (hover:hover) and (pointer:fine){ body, a, button{cursor:none} }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--ink);color:#fff}
+
+  /* ---------- Loader ---------- */
+  .loader{
+    --r:0px;
+    position:fixed; inset:0; z-index:100; background:#0b0b0c; color:#fff; overflow:hidden;
+    -webkit-mask:radial-gradient(circle at 50% 50%, transparent var(--r), #000 calc(var(--r) + 1px));
+            mask:radial-gradient(circle at 50% 50%, transparent var(--r), #000 calc(var(--r) + 1px));
+  }
+  .loader canvas{position:absolute; inset:0; width:100%; height:100%}
+
+  /* ---------- Header ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:grid; grid-template-columns:1fr 1fr; column-gap:clamp(12px,1.6vw,22px); align-items:start;
+    padding:12px var(--pad) 0; font-size:12px; line-height:1.25;
+    mix-blend-mode:difference; color:#fff;
+  }
+  header nav{display:flex; flex-direction:column; justify-self:start; grid-column:2; grid-row:1}
+  header .right{grid-column:2; grid-row:1; justify-self:end; text-align:right; display:flex; flex-direction:column; align-items:flex-end}
+  .sub{color:var(--mute-2)}
+  header .sub{color:#777}
+
+  /* Roll text hover */
+  .roll{position:relative; display:inline-block; overflow:hidden; vertical-align:top}
+  .roll span{display:block; transition:transform .55s var(--ease)}
+  .roll span + span{position:absolute; inset:0; transform:translateY(100%)}
+  .roll:hover span:first-child, .totop:hover .roll span:first-child{transform:translateY(-100%)}
+  .roll:hover span + span, .totop:hover .roll span + span{transform:translateY(0)}
+
+  /* ---------- Cursor ---------- */
+  .cursor{
+    position:fixed; top:0; left:0; z-index:90; pointer-events:none;
+    width:10px; height:10px; margin:-5px 0 0 -5px; border-radius:50%;
+    background:#fff; mix-blend-mode:difference;
+    transition:width .45s var(--ease), height .45s var(--ease), margin .45s var(--ease), background .3s;
+    display:grid; place-items:center;
+  }
+  .cursor__label{
+    font-size:13px; font-weight:500; color:#fff; opacity:0; transform:scale(.6);
+    transition:opacity .3s, transform .45s var(--ease); white-space:nowrap;
+  }
+  .cursor.is-view{width:104px; height:104px; margin:-52px 0 0 -52px; background:var(--ink); mix-blend-mode:normal}
+  .cursor.is-view .cursor__label{opacity:1; transform:scale(1)}
+  .cursor.is-link{width:44px; height:44px; margin:-22px 0 0 -22px}
+  @media (hover:none), (pointer:coarse){ .cursor{display:none} }
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative; min-height:100svh; padding:0 var(--pad); display:flex; flex-direction:column}
+  .hero__intro{
+    padding-top:clamp(180px, 26.4vw, 380px);
+    font-size:clamp(20px, 1.95vw, 28px); font-weight:400; line-height:1.3; letter-spacing:-.03em;
+  }
+  .hero__title{
+    margin-top:auto; margin-bottom:clamp(60px, 12vh, 150px); align-self:flex-end; text-align:right;
+    font-size:clamp(64px, 11.4vw, 164px); font-weight:600; line-height:.86; letter-spacing:-.045em;
+    text-transform:uppercase;
+  }
+  .line-mask{display:block; overflow:hidden; padding-bottom:.04em}
+  .line-mask > span{display:inline-block}
+  .char{display:inline-block; will-change:transform, font-variation-settings; font-variation-settings:"wght" 600}
+  .hero__scroll{
+    position:absolute; left:var(--pad); bottom:0; font-size:12px; color:var(--mute);
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .hero__scroll i{display:block; width:1px; height:64px; background:var(--line); position:relative; overflow:hidden}
+  .hero__scroll i::after{content:""; position:absolute; inset:0; background:var(--ink); animation:scan 1.8s var(--ease) infinite}
+  @keyframes scan{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
+
+  /* ---------- Work ---------- */
+  .work{padding:0 var(--pad); display:grid; grid-template-columns:1fr 1fr; column-gap:clamp(12px,1.6vw,22px); row-gap:clamp(80px, 9vw, 130px)}
+  .card{display:block; position:relative}
+  .card__media{
+    position:relative; aspect-ratio: 742/558; overflow:hidden; background:var(--ph);
+  }
+  .card__img{
+    position:absolute; inset:-8% 0; background:var(--ph);
+    transition:transform 1.1s var(--ease), filter .6s;
+    display:grid; place-items:center;
+  }
+  .card__img::before{ /* soft generative glow, revealed on hover */
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(40% 50% at var(--mx,50%) var(--my,50%), rgba(255,255,255,.55), transparent 70%);
+    opacity:0; transition:opacity .5s;
+  }
+  .card:hover .card__img{transform:scale(1.045)}
+  .card:hover .card__img::before{opacity:1}
+  .card__idx{
+    position:relative; font-size:clamp(80px,13vw,190px); font-weight:600; letter-spacing:-.06em; color:rgba(255,255,255,.0);
+    -webkit-text-stroke:1px rgba(255,255,255,.55); transform:translateY(20%); opacity:0;
+    transition:transform .9s var(--ease), opacity .6s;
+  }
+  .card:hover .card__idx{transform:none; opacity:1}
+  .card__img--vessel{background:#ECEDF0; display:flex; align-items:center; justify-content:center; gap:2.2%}
+  .card__img--vessel img{
+    width:29%; aspect-ratio:1418/2000; object-fit:cover; display:block;
+    box-shadow:0 18px 40px -18px rgba(17,17,17,.35);
+    transition:transform 1s var(--ease);
+  }
+  .card__img--vessel img:nth-child(1){transform:translateX(14%) scale(.9)}
+  .card__img--vessel img:nth-child(2){position:relative; z-index:1}
+  .card__img--vessel img:nth-child(3){transform:translateX(-14%) scale(.9)}
+  .card:hover .card__img--vessel img:nth-child(1){transform:translateX(-6%) rotate(-3deg) scale(.95)}
+  .card:hover .card__img--vessel img:nth-child(2){transform:translateY(-3%) scale(1.04)}
+  .card:hover .card__img--vessel img:nth-child(3){transform:translateX(6%) rotate(3deg) scale(.95)}
+  .card:hover .card__img--vessel{transform:none}
+  .card__img--photo{background:#E6E8EC}
+  .card__img--photo img{position:absolute; left:5%; top:12%; width:90%; height:76%; object-fit:contain}
+  .card__img--cover{background:#5A88E2}
+  .card__img--cover img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+  .card__img--dark{background:#000}
+  .card__meta{
+    position:relative; margin-top:clamp(18px,2vw,28px); padding-top:8px;
+    display:flex; justify-content:space-between; align-items:flex-end; font-size:13px; line-height:1.25;
+  }
+  .card__meta::before, .card__meta::after{content:""; position:absolute; top:0; left:0; height:1px; width:100%; background:var(--line)}
+  .card__meta::after{background:var(--ink); transform:scaleX(0); transform-origin:right; transition:transform .8s var(--ease)}
+  .card:hover .card__meta::after{transform:scaleX(1); transform-origin:left}
+  .card__meta .sub{color:var(--mute-2)}
+  .card__num{color:var(--mute); font-variant-numeric:tabular-nums}
+  .card__title{display:inline-block; transition:transform .6s var(--ease)}
+  .card:hover .card__title{transform:translateX(6px)}
+
+  /* ---------- About ---------- */
+  .about{
+    padding:clamp(160px, 18vw, 260px) var(--pad) 0;
+    display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:40px;
+  }
+  .about__title{
+    font-size:clamp(52px, 7.1vw, 102px); font-weight:600; line-height:.88; letter-spacing:-.045em; text-transform:uppercase;
+  }
+  .about__body{max-width:500px; font-family:"Pretendard Variable",Pretendard,sans-serif; letter-spacing:-.02em}
+  .about__body h3{font-size:clamp(17px,1.4vw,20px); font-weight:600; margin-bottom:18px}
+  .about__body p{font-size:13px; line-height:1.75; color:var(--ink-2)}
+
+  /* ---------- Contact ---------- */
+  .contact{padding:clamp(160px,16vw,240px) var(--pad) clamp(80px,9vw,130px); display:flex; flex-direction:column; align-items:flex-end; text-align:right}
+  .contact h2{font-size:clamp(40px, 3.95vw, 57px); font-weight:500; letter-spacing:-.045em; line-height:1; margin-bottom:clamp(24px,3vw,40px)}
+  .contact a{display:block; font-size:clamp(17px,1.4vw,20px); line-height:1.45; letter-spacing:-.03em; position:relative}
+  .contact a .u{position:absolute; left:0; right:0; bottom:2px; height:1px; background:var(--ink); transform:scaleX(0); transform-origin:right; transition:transform .6s var(--ease)}
+  .contact a:hover .u{transform:scaleX(1); transform-origin:left}
+  .magnet{display:inline-block; will-change:transform}
+
+  /* ---------- Footer ---------- */
+  footer{padding:0 var(--pad) 40px; display:grid; grid-template-columns:1fr 1fr; font-size:12px; line-height:1.25}
+  .totop{
+    grid-column:2; grid-row:1; justify-self:end; align-self:end;
+    display:flex; align-items:center; gap:12px; background:none; border:0; padding:0;
+    font:inherit; font-size:12px; color:var(--ink);
+  }
+  .totop__ring{position:relative; width:48px; height:48px; display:grid; place-items:center; overflow:hidden; border-radius:50%}
+  .totop__ring svg{position:absolute; inset:0; transform:rotate(-90deg)}
+  .totop__ring circle{fill:none; stroke:var(--line); stroke-width:1}
+  .totop__ring circle.p{stroke:var(--ink); stroke-dasharray:144.5; stroke-dashoffset:var(--off,144.5)}
+  .totop__ring i{font-style:normal; font-size:15px; transition:transform .6s var(--ease)}
+  .totop:hover .totop__ring i{animation:up .7s var(--ease)}
+  @keyframes up{0%{transform:none}45%{transform:translateY(-140%)}46%{transform:translateY(140%)}100%{transform:none}}
+  footer .rule{grid-column:1/-1; height:1px; background:var(--line); margin-top:36px; transform-origin:left; transform:scaleX(0)}
+  footer .clock{font-variant-numeric:tabular-nums}
+
+  .toast{
+    position:fixed; left:50%; bottom:32px; z-index:95; transform:translate(-50%, calc(100% + 48px));
+    background:var(--ink); color:#fff; font-size:13px; padding:12px 18px; border-radius:999px;
+    transition:transform .6s var(--ease);
+  }
+  .toast.show{transform:translate(-50%, 0)}
+
+  .skew{will-change:transform}
+
+  @media (max-width: 720px){
+    .work{grid-template-columns:1fr; row-gap:64px}
+    .about{grid-template-columns:1fr; gap:48px}
+    footer{grid-template-columns:1fr 1fr}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .loader{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="loader" aria-hidden="true">
+  <canvas></canvas>
+</div>
+
+<div class="cursor" aria-hidden="true"><span class="cursor__label">View</span></div>
+
+<header>
+  <div>©<br><span class="clock" id="year">2026</span></div>
+  <nav>
+    <a href="#top" class="roll" data-cursor="link"><span>Home</span><span>Home</span></a>
+    <a href="#work" class="roll" data-cursor="link"><span>Work</span><span>Work</span></a>
+  </nav>
+  <div class="right">
+    <a href="#about" class="roll" data-cursor="link"><span>About</span><span>About</span></a>
+    <span class="sub" id="seoul">Seo Yehyun</span>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <p class="hero__intro">
+      <span class="line-mask"><span class="intro-line">Yehyun Seo</span></span>
+      <span class="line-mask"><span class="intro-line">UI/UX &amp; BX Design</span></span>
+    </p>
+    <h1 class="hero__title skew prox" aria-label="Things I make">
+      <span class="line-mask"><span class="split">Things</span></span>
+      <span class="line-mask"><span class="split">I Make</span></span>
+    </h1>
+    <div class="hero__scroll">Scroll<i></i></div>
+  </section>
+
+  <section class="work" id="work">
+    <a class="card" href="https://momakers.vercel.app/?from=portfolio" data-cursor="view">
+      <div class="card__media"><div class="card__img card__img--cover">
+        <img src="images/momakers.jpg" alt="MoMakers film studio website — manifesto and film stills">
+      </div></div>
+      <div class="card__meta">
+        <div><span class="card__title">MoMakers</span><br><span class="sub">Web · Film Production Studio / 2026</span></div>
+        <span class="card__num">01</span>
+      </div>
+    </a>
+    <a class="card" href="https://vessel-psi-vert.vercel.app/?from=portfolio" data-cursor="view">
+      <div class="card__media"><div class="card__img card__img--vessel">
+        <img src="images/vessel/02-perfume.webp" alt="">
+        <img src="images/vessel/01-vase.webp" alt="VESSEL poster — vase">
+        <img src="images/vessel/03-wine.webp" alt="">
+      </div></div>
+      <div class="card__meta">
+        <div><span class="card__title">VESSEL</span><br><span class="sub">Web · Editorial Archive of Glass Objects / 2026</span></div>
+        <span class="card__num">02</span>
+      </div>
+    </a>
+    <a class="card" href="https://seoul-grand-park-rho.vercel.app/?from=portfolio" data-cursor="view">
+      <div class="card__media"><div class="card__img card__img--photo">
+        <img src="images/seoul-grand-park.jpg" alt="Seoul Grand Park app renewal — mood board">
+      </div></div>
+      <div class="card__meta">
+        <div><span class="card__title">Seoul Grand Park</span><br><span class="sub">UI/UX · App Service Renewal / 2026</span></div>
+        <span class="card__num">03</span>
+      </div>
+    </a>
+    <a class="card" href="https://visual-communication-kappa.vercel.app/?from=portfolio" data-cursor="view">
+      <div class="card__media"><div class="card__img card__img--cover card__img--dark">
+        <img src="images/visual-communication.jpg" alt="Visual Communication Archive — title screen">
+      </div></div>
+      <div class="card__meta">
+        <div><span class="card__title">Visual Communication</span><br><span class="sub">Web · Class Archive / 2026</span></div>
+        <span class="card__num">04</span>
+      </div>
+    </a>
+  </section>
+
+  <section class="about" id="about">
+    <h2 class="about__title skew prox" aria-label="Everyday finds new ideas">
+      <span class="line-mask"><span class="split">Everyday</span></span>
+      <span class="line-mask"><span class="split">Finds</span></span>
+      <span class="line-mask"><span class="split">New Ideas</span></span>
+    </h2>
+    <div class="about__body">
+      <h3>일상에서 발견하고, 디자인으로 연결합니다</h3>
+      <p>안녕하세요. UI/UX와 BX를 디자인하는 서예현입니다. 길에서 마주친 간판과 자연의 색, 익숙한 사물의 형태에서 디자인의 실마리를 찾습니다. 다양한 영감을 저만의 시선으로 연결하고, 표현 하나에도 분명한 이유를 담고자 합니다.</p>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <h2 class="split-roll">Contact</h2>
+    <a href="mailto:yehyun0107@naver.com" class="magnet copy" data-copy="yehyun0107@naver.com" data-cursor="link">yehyun0107@naver.com<i class="u"></i></a>
+    <a href="tel:+821082891068" class="magnet" data-cursor="link">+82 10. 8289. 1068<i class="u"></i></a>
+  </section>
+</main>
+
+<footer>
+  <div>©<br>2026</div>
+  <div><span class="sub">Designed by</span><br>Yehyun Seo</div>
+  <button class="totop magnet" type="button" data-cursor="link" aria-label="맨 위로">
+    <span class="totop__ring"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="23"/><circle class="p" cx="24" cy="24" r="23"/></svg><i>↑</i></span>
+    <span class="roll"><span>Back to top</span><span>Back to top</span></span>
+  </button>
+  <div class="rule"></div>
+</footer>
+
+<div class="toast" role="status" aria-live="polite">Copied to clipboard</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  gsap.registerPlugin(ScrollTrigger);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+  /* ---------- split chars ---------- */
+  document.querySelectorAll('.split').forEach(el => {
+    const text = el.textContent;
+    el.textContent = '';
+    [...text].forEach(c => {
+      const s = document.createElement('span');
+      s.className = 'char';
+      s.textContent = c === ' ' ? ' ' : c;
+      el.appendChild(s);
+    });
+  });
+
+  /* ---------- smooth scroll ---------- */
+  const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    if (id.length < 2) return;
+    e.preventDefault();
+    lenis.scrollTo(id === '#top' ? 0 : id, { offset: -40, duration: 1.6 });
+  }));
+
+  /* ---------- loader → intro ---------- */
+  const loader = document.querySelector('.loader');
+  gsap.set('.hero .char', { yPercent: 110 });
+  gsap.set('.intro-line', { yPercent: 110 });
+  lenis.stop();
+
+  // tunnel: rings + streaks rushing toward the centre
+  const cv = loader.querySelector('canvas'), ctx = cv.getContext('2d');
+  const warp = { speed: .12 };
+  let W, H, R, phase = 0, last = performance.now();
+  const resize = () => {
+    const d = Math.min(devicePixelRatio, 2);
+    W = cv.width = innerWidth * d; H = cv.height = innerHeight * d;
+    R = Math.hypot(W, H) / 2;
+  };
+  resize(); addEventListener('resize', resize);
+  const streaks = Array.from({ length: 140 }, () => ({ a: Math.random() * Math.PI * 2, d: Math.random(), s: .4 + Math.random() * .8 }));
+  const RINGS = 18;
+  const draw = now => {
+    if (!loader.isConnected) return;
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    phase += dt * warp.speed;
+    ctx.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H / 2;
+    for (let i = 0; i < RINGS; i++) {
+      const f = ((i / RINGS) - phase) % 1, k = f < 0 ? f + 1 : f; // 1 = edge, 0 = centre
+      const r = R * k * k;
+      ctx.strokeStyle = `rgba(255,255,255,${.04 + (1 - k) * .22})`;
+      ctx.lineWidth = Math.max(.5, k * 2);
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.lineCap = 'round';
+    streaks.forEach(p => {
+      p.d -= dt * warp.speed * p.s * 2.2;
+      if (p.d <= .02) { p.d = 1; p.a = Math.random() * Math.PI * 2; }
+      const r1 = R * p.d * p.d, r2 = R * Math.min(1.2, (p.d + .04 + warp.speed * .08) ** 2);
+      const ca = Math.cos(p.a), sa = Math.sin(p.a);
+      ctx.strokeStyle = `rgba(255,255,255,${.12 + (1 - p.d) * .5})`;
+      ctx.lineWidth = 1 + p.d * 1.5;
+      ctx.beginPath(); ctx.moveTo(cx + ca * r1, cy + sa * r1); ctx.lineTo(cx + ca * r2, cy + sa * r2); ctx.stroke();
+    });
+    requestAnimationFrame(draw);
+  };
+  requestAnimationFrame(draw);
+
+  const main = document.querySelector('main');
+  const tl = gsap.timeline({ onComplete: () => {
+    lenis.start(); loader.remove();
+    gsap.set(main, { clearProps: 'transform,filter,transformOrigin' });
+  } });
+  const holeR = () => Math.hypot(innerWidth, innerHeight) / 2 + 40;
+  tl.to(warp, { speed: 1.2, duration: reduce ? 0 : .9, ease: 'power2.in' })
+    .to(warp, { speed: 3.5, duration: .35, ease: 'power3.in' })
+    .fromTo(main, { scale: 1.35, filter: 'blur(14px)', transformOrigin: () => `50% ${scrollY + innerHeight / 2}px` },
+      { scale: 1, filter: 'blur(0px)', duration: reduce ? 0 : 1.1, ease: 'expo.out' }, '-=.1')
+    .fromTo(loader, { '--r': '0px' }, { '--r': () => holeR() + 'px', duration: reduce ? 0 : .9, ease: 'expo.inOut' }, '<-.2')
+    .to('.intro-line', { yPercent: 0, duration: 1.1, stagger: .08, ease: 'expo.out' }, '-=.55')
+    .to('.hero .char', { yPercent: 0, duration: 1.2, stagger: .035, ease: 'expo.out' }, '<.1');
+
+  /* ---------- hero parallax out ---------- */
+  gsap.to('.hero__title', {
+    yPercent: -35, opacity: .15, ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+  });
+  gsap.to('.hero__intro', {
+    yPercent: -120, ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+  });
+
+  /* ---------- cards: inner parallax ---------- */
+  document.querySelectorAll('.card').forEach((card, i) => {
+    const media = card.querySelector('.card__media');
+    const img = card.querySelector('.card__img');
+    gsap.fromTo(img, { yPercent: -6 }, {
+      yPercent: 6, ease: 'none',
+      scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+    // light follows the mouse
+    card.addEventListener('mousemove', e => {
+      const r = media.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      img.style.setProperty('--mx', x * 100 + '%');
+      img.style.setProperty('--my', y * 100 + '%');
+    });
+    if (card.getAttribute('href') === '#') card.addEventListener('click', e => e.preventDefault());
+  });
+
+  /* ---------- about headline reveal ---------- */
+  gsap.from('.about__title .char', {
+    yPercent: 110, duration: 1.2, stagger: .025, ease: 'expo.out',
+    scrollTrigger: { trigger: '.about', start: 'top 75%' }
+  });
+  gsap.from('.about__body h3', {
+    y: 20, opacity: 0, duration: 1, ease: 'expo.out',
+    scrollTrigger: { trigger: '.about', start: 'top 70%' }
+  });
+
+  /* ---------- contact ---------- */
+  const ch = document.querySelector('.contact h2');
+  ch.innerHTML = [...ch.textContent].map(c => `<span class="line-mask" style="display:inline-block"><span class="char">${c}</span></span>`).join('');
+  gsap.from('.contact h2 .char', {
+    yPercent: 110, duration: 1.1, stagger: .04, ease: 'expo.out',
+    scrollTrigger: { trigger: '.contact', start: 'top 80%' }
+  });
+  gsap.from('.contact a', {
+    y: 20, opacity: 0, duration: 1, stagger: .1, ease: 'expo.out',
+    scrollTrigger: { trigger: '.contact', start: 'top 75%' }
+  });
+  gsap.to('footer .rule', { scaleX: 1, duration: 1.6, ease: 'expo.inOut', scrollTrigger: { trigger: 'footer', start: 'top 95%' } });
+
+  // magnetic links
+  document.querySelectorAll('.magnet').forEach(el => {
+    el.addEventListener('mousemove', e => {
+      const r = el.getBoundingClientRect();
+      gsap.to(el, { x: (e.clientX - r.left - r.width / 2) * .25, y: (e.clientY - r.top - r.height / 2) * .4, duration: .5, ease: 'power3.out' });
+    });
+    el.addEventListener('mouseleave', () => gsap.to(el, { x: 0, y: 0, duration: .8, ease: 'elastic.out(1, .4)' }));
+  });
+
+  // copy email
+  const toast = document.querySelector('.toast');
+  document.querySelector('.copy').addEventListener('click', async e => {
+    try {
+      await navigator.clipboard.writeText(e.currentTarget.dataset.copy);
+      e.preventDefault();
+      toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.classList.remove('show'), 1800);
+    } catch (_) { /* fall back to mailto */ }
+  });
+
+  /* ---------- back to top ---------- */
+  const totop = document.querySelector('.totop');
+  totop.addEventListener('click', () => lenis.scrollTo(0, { duration: 2, easing: t => 1 - Math.pow(1 - t, 4) }));
+  lenis.on('scroll', ({ progress }) => totop.style.setProperty('--off', 144.5 * (1 - progress)));
+
+  /* ---------- scroll velocity skew on big type ---------- */
+  const skews = gsap.utils.toArray('.skew');
+  const setSkew = skews.map(el => gsap.quickTo(el, 'skewY', { duration: .5, ease: 'power3' }));
+  lenis.on('scroll', ({ velocity }) => {
+    const s = gsap.utils.clamp(-6, 6, velocity * -.18);
+    setSkew.forEach(f => f(s));
+  });
+
+  /* ---------- cursor ---------- */
+  if (fine) {
+    const cur = document.querySelector('.cursor');
+    const xTo = gsap.quickTo(cur, 'x', { duration: .45, ease: 'power3' });
+    const yTo = gsap.quickTo(cur, 'y', { duration: .45, ease: 'power3' });
+    let mx = innerWidth / 2, my = innerHeight / 2;
+    addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; xTo(mx); yTo(my); });
+    document.querySelectorAll('[data-cursor]').forEach(el => {
+      const cls = el.dataset.cursor === 'view' ? 'is-view' : 'is-link';
+      el.addEventListener('mouseenter', () => cur.classList.add(cls));
+      el.addEventListener('mouseleave', () => cur.classList.remove(cls));
+    });
+
+    /* proximity font-weight on headline chars */
+    const chars = gsap.utils.toArray('.prox .char');
+    const setters = chars.map(c => gsap.quickTo(c, '--w', { duration: .5, ease: 'power2' }));
+    chars.forEach(c => { c.style.setProperty('--w', 600); c.style.fontVariationSettings = '"wght" var(--w)'; });
+    const tick = () => {
+      chars.forEach((c, i) => {
+        const r = c.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > innerHeight + 200) return;
+        const d = Math.hypot(mx - (r.left + r.width / 2), my - (r.top + r.height / 2));
+        const t = Math.max(0, 1 - d / 260);
+        setters[i](600 - t * 420);
+      });
+    };
+    gsap.ticker.add(tick);
+  }
+
+  /* ---------- live Seoul clock in header ---------- */
+  const seoul = document.getElementById('seoul');
+  const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const right = document.querySelector('header .right');
+  right.addEventListener('mouseenter', () => { seoul.dataset.hover = 1; });
+  right.addEventListener('mouseleave', () => { delete seoul.dataset.hover; seoul.textContent = 'Seo Yehyun'; });
+  setInterval(() => { if (seoul.dataset.hover) seoul.textContent = 'Seoul ' + fmt.format(new Date()); }, 250);
+})();
+</script>
+</body>
+</html>
