@@ -13,8 +13,8 @@
     --bg:#ffffff;
     --ink:#111111;
     --ink-2:#292929;
-    --mute:#848484;
-    --mute-2:#999999;
+    --mute:#6b6b6b;
+    --mute-2:#6f6f6f;
     --line:#EBEBEB;
     --ph:#B0B3C2;
     --pad:clamp(16px, 3.6vw, 52px);
@@ -46,7 +46,7 @@
   header{
     position:fixed; top:0; left:0; right:0; z-index:50;
     display:grid; grid-template-columns:1fr 1fr; column-gap:clamp(12px,1.6vw,22px); align-items:start;
-    padding:12px var(--pad) 0; font-size:12px; line-height:1.25;
+    padding:14px var(--pad) 0; font-size:13px; line-height:1.3;
     mix-blend-mode:difference; color:#fff;
   }
   header nav{display:flex; flex-direction:column; justify-self:start; grid-column:2; grid-row:1}
@@ -73,19 +73,20 @@
     font-size:13px; font-weight:500; color:#fff; opacity:0; transform:scale(.6);
     transition:opacity .3s, transform .45s var(--ease); white-space:nowrap;
   }
-  .cursor.is-view{width:104px; height:104px; margin:-52px 0 0 -52px; background:var(--ink); mix-blend-mode:normal}
+  .cursor.is-view{width:76px; height:76px; margin:-38px 0 0 -38px; background:var(--ink); mix-blend-mode:normal}
   .cursor.is-view .cursor__label{opacity:1; transform:scale(1)}
   .cursor.is-link{width:44px; height:44px; margin:-22px 0 0 -22px}
   @media (hover:none), (pointer:coarse){ .cursor{display:none} }
 
   /* ---------- Hero ---------- */
-  .hero{position:relative; min-height:100svh; padding:0 var(--pad); display:flex; flex-direction:column}
+  .hero{position:relative; min-height:calc(100svh - clamp(110px, 16vh, 180px)); padding:0 var(--pad); display:flex; flex-direction:column}
   .hero__intro{
     padding-top:clamp(180px, 26.4vw, 380px);
     font-size:clamp(20px, 1.95vw, 28px); font-weight:400; line-height:1.3; letter-spacing:-.03em;
   }
+  .hero__lede{margin-top:16px; max-width:420px; font-family:"Pretendard Variable",Pretendard,sans-serif; font-size:clamp(15px,1.15vw,17px); line-height:1.55; letter-spacing:-.02em; color:var(--ink-2)}
   .hero__title{
-    margin-top:auto; margin-bottom:clamp(60px, 12vh, 150px); align-self:flex-end; text-align:right;
+    margin-top:auto; margin-bottom:clamp(36px, 6vh, 72px); align-self:flex-end; text-align:right;
     font-size:clamp(56px, 8.6vw, 124px);
   }
   .hero__title, .about__title{
@@ -150,12 +151,19 @@
   .card__img--type img{position:absolute; left:4%; top:0; width:92%; height:100%; object-fit:contain}
   .card__meta{
     position:relative; margin-top:clamp(18px,2vw,28px); padding-top:8px;
-    display:flex; justify-content:space-between; align-items:flex-end; font-size:13px; line-height:1.25;
+    display:flex; justify-content:space-between; align-items:flex-end; font-size:14px; line-height:1.3;
   }
   .card__meta::before, .card__meta::after{content:""; position:absolute; top:0; left:0; height:1px; width:100%; background:var(--line)}
   .card__meta::after{background:var(--ink); transform:scaleX(0); transform-origin:right; transition:transform .8s var(--ease)}
   .card:hover .card__meta::after{transform:scaleX(1); transform-origin:left}
   .card__meta .sub{color:var(--mute-2)}
+  .card__info, .hero__lede, .about__body{word-break:keep-all}
+  .card__info{display:flex; flex-direction:column; gap:4px; min-width:0}
+  .card__title{font-size:15px; font-weight:500}
+  .card__desc{font-family:"Pretendard Variable",Pretendard,sans-serif; font-size:14px; line-height:1.5; letter-spacing:-.02em; color:var(--ink-2)}
+  .card__side{display:flex; flex-direction:column; align-items:flex-end; gap:10px; flex-shrink:0; margin-left:16px}
+  .card__kind{font-size:12px; padding:5px 10px; border:1px solid var(--ink); border-radius:999px; white-space:nowrap; transition:background .3s, color .3s}
+  .card:hover .card__kind{background:var(--ink); color:#fff}
   .card__num{color:var(--mute); font-variant-numeric:tabular-nums}
   .card__title{display:inline-block; transition:transform .6s var(--ease)}
   .card:hover .card__title{transform:translateX(6px)}
@@ -170,7 +178,11 @@
   }
   .about__body{max-width:500px; font-family:"Pretendard Variable",Pretendard,sans-serif; letter-spacing:-.02em}
   .about__body h3{font-size:clamp(17px,1.4vw,20px); font-weight:600; margin-bottom:18px}
-  .about__body p{font-size:13px; line-height:1.75; color:var(--ink-2)}
+  .about__body p{font-size:14px; line-height:1.75; color:var(--ink-2)}
+  .about__skills{margin-top:28px; border-top:1px solid var(--line)}
+  .about__skills div{display:grid; grid-template-columns:72px 1fr; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); font-size:14px; line-height:1.5}
+  .about__skills dt{font-family:"Inter Tight",sans-serif; font-weight:500}
+  .about__skills dd{color:var(--ink-2)}
 
   /* ---------- Contact ---------- */
   .contact{padding:clamp(160px,16vw,240px) var(--pad) clamp(80px,9vw,130px); display:flex; flex-direction:column; align-items:flex-end; text-align:right}
@@ -232,7 +244,7 @@
   </nav>
   <div class="right">
     <a href="#about" class="roll" data-cursor="link"><span>About</span><span>About</span></a>
-    <span class="sub" id="seoul">Seo Yehyun</span>
+    <span class="sub" id="seoul">Yehyun Seo</span>
   </div>
 </header>
 
@@ -242,50 +254,66 @@
       <span class="line-mask"><span class="intro-line">Yehyun Seo</span></span>
       <span class="line-mask"><span class="intro-line">UI/UX &amp; BX Design</span></span>
     </p>
+    <p class="hero__lede">브랜드의 개성을 사용하기 쉬운 디지털 경험으로 연결합니다.</p>
     <h1 class="hero__title skew prox" aria-label="Things I make">
       <span class="line-mask"><span class="split">Things</span></span>
       <span class="line-mask"><span class="split">I Make</span></span>
     </h1>
-    <div class="hero__scroll">Scroll<i></i></div>
   </section>
 
   <section class="work" id="work">
-    <a class="card" href="https://momakers.vercel.app/?from=portfolio" data-cursor="view">
+    <a class="card" href="https://seoul-grand-park-rho.vercel.app/?from=portfolio" data-cursor="view" data-label="Case study">
+      <div class="card__media"><div class="card__img card__img--photo">
+        <img src="images/seoul-grand-park.jpg" alt="Seoul Grand Park app renewal — mood board">
+      </div></div>
+      <div class="card__meta">
+        <div class="card__info">
+          <span class="card__title">Seoul Grand Park</span>
+          <p class="card__desc">길찾기와 예약 접근성을 개선한 서울대공원 앱 리디자인</p>
+          <span class="sub">UI/UX · App Renewal / 2026 — 개인 프로젝트 · UI/UX 100%</span>
+        </div>
+        <div class="card__side"><span class="card__kind card__kind--case">Case study →</span><span class="card__num">01</span></div>
+      </div>
+    </a>
+    <a class="card" href="https://momakers.vercel.app/?from=portfolio" data-cursor="view" data-label="Live ↗">
       <div class="card__media"><div class="card__img card__img--cover">
         <img src="images/momakers.jpg" alt="MoMakers film studio website — manifesto and film stills">
       </div></div>
       <div class="card__meta">
-        <div><span class="card__title">MoMakers</span><br><span class="sub">Web · Film Production Studio / 2026</span></div>
-        <span class="card__num">01</span>
+        <div class="card__info">
+          <span class="card__title">MoMakers</span>
+          <p class="card__desc">독립영화 제작사의 개성을 담은 웹사이트</p>
+          <span class="sub">Web · Film Production Studio / 2026 — 개인 프로젝트 · 기획 / 디자인 / 구현</span>
+        </div>
+        <div class="card__side"><span class="card__kind card__kind--live">Live site ↗</span><span class="card__num">02</span></div>
       </div>
     </a>
-    <a class="card" href="https://vessel-psi-vert.vercel.app/?from=portfolio" data-cursor="view">
+    <a class="card" href="https://vessel-psi-vert.vercel.app/?from=portfolio" data-cursor="view" data-label="Live ↗">
       <div class="card__media"><div class="card__img card__img--vessel">
         <img src="images/vessel/02-perfume.webp" alt="">
         <img src="images/vessel/01-vase.webp" alt="VESSEL poster — vase">
         <img src="images/vessel/03-wine.webp" alt="">
       </div></div>
       <div class="card__meta">
-        <div><span class="card__title">VESSEL</span><br><span class="sub">Web · Editorial Archive of Glass Objects / 2026</span></div>
-        <span class="card__num">02</span>
+        <div class="card__info">
+          <span class="card__title">VESSEL</span>
+          <p class="card__desc">유리 오브제 포스터 시리즈와 이를 담은 에디토리얼 웹 아카이브</p>
+          <span class="sub">BX · Poster Series & Web / 2026 — 개인 프로젝트 · 포스터 / 웹 기획·디자인·구현</span>
+        </div>
+        <div class="card__side"><span class="card__kind card__kind--live">Live site ↗</span><span class="card__num">03</span></div>
       </div>
     </a>
-    <a class="card" href="https://seoul-grand-park-rho.vercel.app/?from=portfolio" data-cursor="view">
-      <div class="card__media"><div class="card__img card__img--photo">
-        <img src="images/seoul-grand-park.jpg" alt="Seoul Grand Park app renewal — mood board">
-      </div></div>
-      <div class="card__meta">
-        <div><span class="card__title">Seoul Grand Park</span><br><span class="sub">UI/UX · App Service Renewal / 2026</span></div>
-        <span class="card__num">03</span>
-      </div>
-    </a>
-    <a class="card" href="https://visual-communication-kappa.vercel.app/?from=portfolio" data-cursor="view">
+    <a class="card" href="https://visual-communication-kappa.vercel.app/?from=portfolio" data-cursor="view" data-label="Live ↗">
       <div class="card__media"><div class="card__img card__img--type">
         <img src="images/visual-communication.jpg" alt="Visual Communication Archive — Helvetica type study">
       </div></div>
       <div class="card__meta">
-        <div><span class="card__title">Visual Communication</span><br><span class="sub">Web · Class Archive / 2026</span></div>
-        <span class="card__num">04</span>
+        <div class="card__info">
+          <span class="card__title">Visual Communication</span>
+          <p class="card__desc">비주얼 커뮤니케이션 수업 과제를 정리한 인터랙티브 웹 아카이브</p>
+          <span class="sub">Web · Class Archive / 2026 — 수업 과제 · 개인 작업 · 아카이브 디자인 / 구현</span>
+        </div>
+        <div class="card__side"><span class="card__kind card__kind--live">Live site ↗</span><span class="card__num">04</span></div>
       </div>
     </a>
   </section>
@@ -298,7 +326,12 @@
     </h2>
     <div class="about__body">
       <h3>일상에서 발견하고, 디자인으로 연결합니다</h3>
-      <p>안녕하세요. UI/UX와 BX를 디자인하는 서예현입니다. 길에서 마주친 간판과 자연의 색, 익숙한 사물의 형태에서 디자인의 실마리를 찾습니다. 다양한 영감을 저만의 시선으로 연결하고, 표현 하나에도 분명한 이유를 담고자 합니다.</p>
+      <p>안녕하세요. UI/UX와 BX를 디자인하는 서예현(Yehyun Seo)입니다. 길에서 마주친 간판과 자연의 색, 익숙한 사물의 형태에서 디자인의 실마리를 찾습니다. 다양한 영감을 저만의 시선으로 연결하고, 표현 하나에도 분명한 이유를 담고자 합니다.</p>
+      <dl class="about__skills">
+        <div><dt>UI/UX</dt><dd>사용자 문제 정의 · 정보 구조 · 와이어프레임 · UI 디자인</dd></div>
+        <div><dt>BX</dt><dd>브랜드 아이덴티티 · 포스터 · 비주얼 시스템</dd></div>
+        <div><dt>Web</dt><dd>인터랙티브 웹 기획 · 디자인 · HTML/CSS/JS 구현</dd></div>
+      </dl>
     </div>
   </section>
 
@@ -512,14 +545,14 @@
 
   /* ---------- cursor ---------- */
   if (fine) {
-    const cur = document.querySelector('.cursor');
+    const cur = document.querySelector('.cursor'), label = cur.querySelector('.cursor__label');
     const xTo = gsap.quickTo(cur, 'x', { duration: .45, ease: 'power3' });
     const yTo = gsap.quickTo(cur, 'y', { duration: .45, ease: 'power3' });
     let mx = innerWidth / 2, my = innerHeight / 2;
     addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; xTo(mx); yTo(my); });
     document.querySelectorAll('[data-cursor]').forEach(el => {
       const cls = el.dataset.cursor === 'view' ? 'is-view' : 'is-link';
-      el.addEventListener('mouseenter', () => cur.classList.add(cls));
+      el.addEventListener('mouseenter', () => { if (el.dataset.label) label.textContent = el.dataset.label; cur.classList.add(cls); });
       el.addEventListener('mouseleave', () => cur.classList.remove(cls));
     });
 
@@ -544,7 +577,7 @@
   const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const right = document.querySelector('header .right');
   right.addEventListener('mouseenter', () => { seoul.dataset.hover = 1; });
-  right.addEventListener('mouseleave', () => { delete seoul.dataset.hover; seoul.textContent = 'Seo Yehyun'; });
+  right.addEventListener('mouseleave', () => { delete seoul.dataset.hover; seoul.textContent = 'Yehyun Seo'; });
   setInterval(() => { if (seoul.dataset.hover) seoul.textContent = 'Seoul ' + fmt.format(new Date()); }, 250);
 })();
 </script>
