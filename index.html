@@ -35,22 +35,22 @@
 
   /* ---------- Loader ---------- */
   .loader{
-    --r:0px;
-    position:fixed; inset:0; z-index:100; background:#0b0b0c; color:#fff; overflow:hidden;
-    -webkit-mask:radial-gradient(circle at 50% 50%, transparent var(--r), #000 calc(var(--r) + 1px));
-            mask:radial-gradient(circle at 50% 50%, transparent var(--r), #000 calc(var(--r) + 1px));
+    position:fixed; inset:0; z-index:100; background:var(--bg); color:var(--ink);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
   }
-  .loader canvas{position:absolute; inset:0; width:100%; height:100%}
+  .loader__bar{width:min(220px, 50vw); height:1px; background:var(--line); overflow:hidden}
+  .loader__bar i{display:block; height:100%; background:var(--ink); transform:scaleX(0); transform-origin:left}
+  .loader__pct{font-size:12px; color:var(--mute); font-variant-numeric:tabular-nums}
 
   /* ---------- Header ---------- */
   header{
     position:fixed; top:0; left:0; right:0; z-index:50;
-    display:grid; grid-template-columns:1fr 1fr; column-gap:clamp(12px,1.6vw,22px); align-items:start;
+    display:flex; justify-content:space-between; align-items:flex-start;
     padding:14px var(--pad) 0; font-size:13px; line-height:1.3;
     mix-blend-mode:difference; color:#fff;
   }
-  header nav{display:flex; flex-direction:column; justify-self:start; grid-column:2; grid-row:1}
-  header .right{grid-column:2; grid-row:1; justify-self:end; text-align:right; display:flex; flex-direction:column; align-items:flex-end}
+  header .left{display:flex; gap:clamp(20px,2.4vw,36px)}
+  header nav{display:flex; flex-direction:column; align-items:flex-end; text-align:right}
   .sub{color:var(--mute-2)}
   header .sub{color:#777}
 
@@ -231,21 +231,21 @@
 <body>
 
 <div class="loader" aria-hidden="true">
-  <canvas></canvas>
+  <div class="loader__bar"><i></i></div>
+  <span class="loader__pct">0%</span>
 </div>
 
 <div class="cursor" aria-hidden="true"><span class="cursor__label">View</span></div>
 
 <header>
-  <div>©<br><span class="clock" id="year">2026</span></div>
+  <div class="left">
+    <span>© 2026</span>
+    <a href="#about" class="roll" data-cursor="link"><span>About</span><span>About</span></a>
+  </div>
   <nav>
     <a href="#top" class="roll" data-cursor="link"><span>Home</span><span>Home</span></a>
     <a href="#work" class="roll" data-cursor="link"><span>Work</span><span>Work</span></a>
   </nav>
-  <div class="right">
-    <a href="#about" class="roll" data-cursor="link"><span>About</span><span>About</span></a>
-    <span class="sub" id="seoul">Yehyun Seo</span>
-  </div>
 </header>
 
 <main id="top">
@@ -343,7 +343,7 @@
 </main>
 
 <footer>
-  <div>©<br>2026</div>
+  <div>© 2026</div>
   <div><span class="sub">Designed by</span><br>Yehyun Seo</div>
   <button class="totop magnet" type="button" data-cursor="link" aria-label="맨 위로">
     <span class="totop__ring"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="23"/><circle class="p" cx="24" cy="24" r="23"/></svg><i>↑</i></span>
@@ -402,58 +402,13 @@
     gsap.set('.intro-line', { yPercent: 110 });
     lenis.stop();
 
-    // tunnel: rings + streaks rushing toward the centre
-    const cv = loader.querySelector('canvas'), ctx = cv.getContext('2d');
-    const warp = { speed: .12 };
-    let W, H, R, phase = 0, last = performance.now();
-    const resize = () => {
-      const d = Math.min(devicePixelRatio, 2);
-      W = cv.width = innerWidth * d; H = cv.height = innerHeight * d;
-      R = Math.hypot(W, H) / 2;
-    };
-    resize(); addEventListener('resize', resize);
-    const streaks = Array.from({ length: 140 }, () => ({ a: Math.random() * Math.PI * 2, d: Math.random(), s: .4 + Math.random() * .8 }));
-    const RINGS = 18;
-    const draw = now => {
-      if (!loader.isConnected) return;
-      const dt = Math.min(.05, (now - last) / 1000); last = now;
-      phase += dt * warp.speed;
-      ctx.clearRect(0, 0, W, H);
-      const cx = W / 2, cy = H / 2;
-      for (let i = 0; i < RINGS; i++) {
-        const f = ((i / RINGS) - phase) % 1, k = f < 0 ? f + 1 : f; // 1 = edge, 0 = centre
-        const r = R * k * k;
-        ctx.strokeStyle = `rgba(255,255,255,${.04 + (1 - k) * .22})`;
-        ctx.lineWidth = Math.max(.5, k * 2);
-        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-      }
-      ctx.lineCap = 'round';
-      streaks.forEach(p => {
-        p.d -= dt * warp.speed * p.s * 2.2;
-        if (p.d <= .02) { p.d = 1; p.a = Math.random() * Math.PI * 2; }
-        const r1 = R * p.d * p.d, r2 = R * Math.min(1.2, (p.d + .04 + warp.speed * .08) ** 2);
-        const ca = Math.cos(p.a), sa = Math.sin(p.a);
-        ctx.strokeStyle = `rgba(255,255,255,${.12 + (1 - p.d) * .5})`;
-        ctx.lineWidth = 1 + p.d * 1.5;
-        ctx.beginPath(); ctx.moveTo(cx + ca * r1, cy + sa * r1); ctx.lineTo(cx + ca * r2, cy + sa * r2); ctx.stroke();
-      });
-      requestAnimationFrame(draw);
-    };
-    requestAnimationFrame(draw);
-
-    const main = document.querySelector('main');
-    const tl = gsap.timeline({ onComplete: () => {
-      lenis.start(); loader.remove();
-      gsap.set(main, { clearProps: 'transform,filter,transformOrigin' });
-      ScrollTrigger.refresh(); // positions were measured while main was scaled up
-    } });
-    const holeR = () => Math.hypot(innerWidth, innerHeight) / 2 + 40;
-    tl.to(warp, { speed: 1.2, duration: reduce ? 0 : .9, ease: 'power2.in' })
-      .to(warp, { speed: 3.5, duration: .35, ease: 'power3.in' })
-      .fromTo(main, { scale: 1.35, filter: 'blur(14px)', transformOrigin: () => `50% ${scrollY + innerHeight / 2}px` },
-        { scale: 1, filter: 'blur(0px)', duration: reduce ? 0 : 1.1, ease: 'expo.out' }, '-=.1')
-      .fromTo(loader, { '--r': '0px' }, { '--r': () => holeR() + 'px', duration: reduce ? 0 : .9, ease: 'expo.inOut' }, '<-.2')
-      .to('.intro-line', { yPercent: 0, duration: 1.1, stagger: .08, ease: 'expo.out' }, '-=.55')
+    const bar = loader.querySelector('.loader__bar i'), pct = loader.querySelector('.loader__pct');
+    const prog = { v: 0 };
+    gsap.timeline({ onComplete: () => { lenis.start(); loader.remove(); ScrollTrigger.refresh(); } })
+      .to(prog, { v: 100, duration: reduce ? 0 : .9, ease: 'power2.inOut',
+        onUpdate: () => { bar.style.transform = `scaleX(${prog.v / 100})`; pct.textContent = Math.round(prog.v) + '%'; } })
+      .to(loader, { autoAlpha: 0, duration: reduce ? 0 : .4, ease: 'power2.out' })
+      .to('.intro-line', { yPercent: 0, duration: 1.1, stagger: .08, ease: 'expo.out' }, '-=.2')
       .to('.hero .char', { yPercent: 0, duration: 1.2, stagger: .035, ease: 'expo.out' }, '<.1');
   }
 
@@ -572,13 +527,6 @@
     gsap.ticker.add(tick);
   }
 
-  /* ---------- live Seoul clock in header ---------- */
-  const seoul = document.getElementById('seoul');
-  const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const right = document.querySelector('header .right');
-  right.addEventListener('mouseenter', () => { seoul.dataset.hover = 1; });
-  right.addEventListener('mouseleave', () => { delete seoul.dataset.hover; seoul.textContent = 'Yehyun Seo'; });
-  setInterval(() => { if (seoul.dataset.hover) seoul.textContent = 'Seoul ' + fmt.format(new Date()); }, 250);
 })();
 </script>
 </body>
