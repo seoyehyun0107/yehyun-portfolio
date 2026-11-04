@@ -111,7 +111,7 @@
   .work{padding:0 var(--pad); display:grid; grid-template-columns:1fr 1fr; column-gap:clamp(12px,1.6vw,22px); row-gap:clamp(80px, 9vw, 130px)}
   .card{display:block; position:relative}
   .card__media{
-    position:relative; aspect-ratio: 742/558; overflow:hidden; background:var(--ph);
+    display:block; position:relative; aspect-ratio: 742/558; overflow:hidden; background:var(--ph);
   }
   .card__img{
     position:absolute; inset:-8% 0; background:var(--ph);
@@ -206,8 +206,9 @@
   .card__title{font-size:15px; font-weight:500}
   .card__desc{font-family:"Pretendard Variable",Pretendard,sans-serif; font-size:14px; line-height:1.5; letter-spacing:-.02em; color:var(--ink-2)}
   .card__side{display:flex; flex-direction:column; align-items:flex-end; gap:10px; flex-shrink:0; margin-left:16px}
+  .card__meta{color:inherit}
   .card__kind{font-size:12px; padding:5px 10px; border:1px solid var(--ink); border-radius:999px; white-space:nowrap; transition:background .3s, color .3s}
-  .card:hover .card__kind{background:var(--ink); color:#fff}
+  .card__meta:hover .card__kind{background:var(--ink); color:#fff}
   .card__num{color:var(--mute); font-variant-numeric:tabular-nums}
   .card__title{display:inline-block; transition:transform .6s var(--ease)}
   .card:hover .card__title{transform:translateX(6px)}
@@ -404,22 +405,23 @@
 
   document.getElementById('workGrid').innerHTML = PROJECTS.map((p, i) => {
     const n = String(i + 1).padStart(2, '0');
-    const head = p.soon
-      ? `<div class="card card--soon" aria-disabled="true">`
-      : `<a class="card" href="#${p.id}" data-id="${p.id}" data-cursor="view" data-label="Details">`;
-    const media = p.soon ? '<div class="card__img card__img--soon"><span>Coming soon</span></div>' : p.media;
+    // image → the live site, text / Details → the side panel
+    const media = p.soon
+      ? '<div class="card__media"><div class="card__img card__img--soon"><span>Coming soon</span></div></div>'
+      : `<a class="card__media" href="${p.links[0].href}" data-cursor="view" data-label="Visit ↗" aria-label="${p.title} 사이트로 이동">${p.media}</a>`;
     const kind = p.soon ? '<span class="card__kind card__kind--soon">Coming soon</span>' : '<span class="card__kind">Details +</span>';
-    return `${head}
-      <div class="card__media">${media}</div>
-      <div class="card__meta">
+    const meta = p.soon ? '<div class="card__meta">' : `<a class="card__meta" href="#${p.id}" data-id="${p.id}" data-cursor="view" data-label="Details">`;
+    return `<div class="card${p.soon ? ' card--soon' : ''}">
+      ${media}
+      ${meta}
         <div class="card__info">
           <span class="card__title">${p.title}</span>
           <p class="card__desc">${p.desc}</p>
           <span class="sub">${p.field}</span>
         </div>
         <div class="card__side">${kind}<span class="card__num">${n}</span></div>
-      </div>
-    ${p.soon ? '</div>' : '</a>'}`;
+      ${p.soon ? '</div>' : '</a>'}
+    </div>`;
   }).join('');
 
   const detail = document.querySelector('.detail'), panel = detail.querySelector('.detail__panel'), body = detail.querySelector('.detail__body');
@@ -456,7 +458,10 @@
   detail.querySelector('.detail__scrim').addEventListener('click', closeDetail);
   detail.querySelector('.detail__close').addEventListener('click', closeDetail);
   addEventListener('keydown', e => { if (e.key === 'Escape' && detail.classList.contains('open')) closeDetail(); });
-  document.querySelectorAll('a.card').forEach(c => c.addEventListener('click', e => { e.preventDefault(); openDetail(c.dataset.id); }));
+  document.querySelectorAll('a.card__meta').forEach(m => m.addEventListener('click', e => { e.preventDefault(); openDetail(m.dataset.id); }));
+  document.querySelectorAll('a.card__media').forEach(a => a.addEventListener('click', () => {
+    try { sessionStorage.setItem('pf-return', scrollY); } catch (_) {}
+  }));
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
@@ -478,7 +483,7 @@
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(t => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
-  document.querySelectorAll('a[href^="#"]:not(.card)').forEach(a => a.addEventListener('click', e => {
+  document.querySelectorAll('a[href^="#"]:not(.card__meta)').forEach(a => a.addEventListener('click', e => {
     const id = a.getAttribute('href');
     if (id.length < 2) return;
     e.preventDefault();
