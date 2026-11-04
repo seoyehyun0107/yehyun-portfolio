@@ -79,22 +79,22 @@
   @media (hover:none), (pointer:coarse){ .cursor{display:none} }
 
   /* ---------- Hero ---------- */
-  .hero{position:relative; min-height:calc(100svh - clamp(110px, 16vh, 180px)); padding:0 var(--pad); display:flex; flex-direction:column}
+  .hero{position:relative; min-height:100svh; padding:0 var(--pad); display:flex; flex-direction:column}
   .hero__intro{
     padding-top:clamp(180px, 26.4vw, 380px);
     font-size:clamp(20px, 1.95vw, 28px); font-weight:400; line-height:1.3; letter-spacing:-.03em;
   }
   .hero__lede{margin-top:16px; max-width:420px; font-family:"Pretendard Variable",Pretendard,sans-serif; font-size:clamp(15px,1.15vw,17px); line-height:1.55; letter-spacing:-.02em; color:var(--ink-2)}
-  .hero__title{
-    margin-top:auto; margin-bottom:clamp(36px, 6vh, 72px); align-self:flex-end; text-align:right;
+  .works__title{
+    margin:0 var(--pad) clamp(36px, 5vw, 72px); text-align:right;
     font-size:clamp(56px, 8.6vw, 124px);
   }
-  .hero__title, .about__title{
+  .works__title, .about__title{
     font-family:"Inter",sans-serif; font-weight:600; line-height:1; letter-spacing:-.005em;
     text-transform:uppercase; color:var(--ink);
   }
-  .hero__title .line-mask + .line-mask, .about__title .line-mask + .line-mask{margin-top:-.2em}
-  .hero__title .line-mask > span, .about__title .line-mask > span{padding-right:.03em}
+  .about__title .line-mask + .line-mask{margin-top:-.2em}
+  .works__title .line-mask > span, .about__title .line-mask > span{padding-right:.03em}
   .line-mask{display:block; overflow:hidden; padding-bottom:.04em}
   .line-mask > span{display:inline-block}
   .char{display:inline-block; will-change:transform, font-variation-settings; font-variation-settings:"wght" 600}
@@ -108,8 +108,6 @@
 
   /* ---------- Work ---------- */
   .works{padding-top:clamp(120px, 13vw, 200px)}
-  .works__head{display:flex; justify-content:space-between; margin:0 var(--pad) clamp(28px,3vw,44px); padding-bottom:10px; border-bottom:1px solid var(--ink); font-size:14px}
-  .works__count{color:var(--mute); font-variant-numeric:tabular-nums}
   .work{padding:0 var(--pad); display:grid; grid-template-columns:1fr 1fr; column-gap:clamp(12px,1.6vw,22px); row-gap:clamp(80px, 9vw, 130px)}
   .card{display:block; position:relative}
   .card__media{
@@ -301,9 +299,6 @@
       <span class="line-mask"><span class="intro-line">UI/UX &amp; BX Design</span></span>
     </p>
     <p class="hero__lede">의도치 않은 발견으로 새로운 가능성을 만들어갑니다.</p>
-    <h1 class="hero__title skew prox" aria-label="Works">
-      <span class="line-mask"><span class="split">Works</span></span>
-    </h1>
   </section>
 
   <section class="about" id="about">
@@ -324,7 +319,9 @@
   </section>
 
   <section class="works" id="work">
-    <div class="works__head"><span>Projects</span><span class="works__count"></span></div>
+    <h2 class="works__title skew prox" aria-label="Works">
+      <span class="line-mask"><span class="split">Works</span></span>
+    </h2>
     <div class="work" id="workGrid"></div>
   </section>
 
@@ -424,7 +421,6 @@
       </div>
     ${p.soon ? '</div>' : '</a>'}`;
   }).join('');
-  document.querySelector('.works__count').textContent = String(PROJECTS.length).padStart(2, '0');
 
   const detail = document.querySelector('.detail'), panel = detail.querySelector('.detail__panel'), body = detail.querySelector('.detail__body');
   const openDetail = id => {
@@ -500,7 +496,6 @@
     requestAnimationFrame(jump);
     addEventListener('load', jump, { once: true });
   } else {
-    gsap.set('.hero .char', { yPercent: 110 });
     gsap.set('.intro-line', { yPercent: 110 });
     lenis.stop();
 
@@ -510,15 +505,10 @@
       .to(prog, { v: 100, duration: reduce ? 0 : .9, ease: 'power2.inOut',
         onUpdate: () => { bar.style.transform = `scaleX(${prog.v / 100})`; pct.textContent = Math.round(prog.v) + '%'; } })
       .to(loader, { autoAlpha: 0, duration: reduce ? 0 : .4, ease: 'power2.out' })
-      .to('.intro-line', { yPercent: 0, duration: 1.1, stagger: .08, ease: 'expo.out' }, '-=.2')
-      .to('.hero .char', { yPercent: 0, duration: 1.2, stagger: .035, ease: 'expo.out' }, '<.1');
+      .to('.intro-line', { yPercent: 0, duration: 1.1, stagger: .08, ease: 'expo.out' }, '-=.2');
   }
 
   /* ---------- hero parallax out ---------- */
-  gsap.to('.hero__title', {
-    yPercent: -35, ease: 'none',
-    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
-  });
   gsap.to('.hero__intro', {
     yPercent: -120, ease: 'none',
     scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
@@ -539,6 +529,12 @@
       img.style.setProperty('--mx', x * 100 + '%');
       img.style.setProperty('--my', y * 100 + '%');
     });
+  });
+
+  /* ---------- works headline reveal ---------- */
+  gsap.from('.works__title .char', {
+    yPercent: 110, duration: 1.2, stagger: .04, ease: 'expo.out',
+    scrollTrigger: { trigger: '.works__title', start: 'top 85%' }
   });
 
   /* ---------- about headline reveal ---------- */
