@@ -107,6 +107,9 @@
   @keyframes scan{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
 
   /* ---------- Work ---------- */
+  .works{padding-top:clamp(120px, 13vw, 200px)}
+  .works__head{display:flex; justify-content:space-between; margin:0 var(--pad) clamp(28px,3vw,44px); padding-bottom:10px; border-bottom:1px solid var(--ink); font-size:14px}
+  .works__count{color:var(--mute); font-variant-numeric:tabular-nums}
   .work{padding:0 var(--pad); display:grid; grid-template-columns:1fr 1fr; column-gap:clamp(12px,1.6vw,22px); row-gap:clamp(80px, 9vw, 130px)}
   .card{display:block; position:relative}
   .card__media{
@@ -149,6 +152,49 @@
   .card__img--cover img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
   .card__img--type{background:#F7F7F7}
   .card__img--type img{position:absolute; left:4%; top:0; width:92%; height:100%; object-fit:contain}
+  .card__img--soon{background:#F2F2F3}
+  .card__img--soon span{font-family:"Inter",sans-serif; font-weight:500; font-size:clamp(18px,1.8vw,26px); letter-spacing:-.01em; color:#9a9a9f}
+  .card--soon .card__meta::after{display:none}
+  .card--soon .card__title{transform:none!important}
+  .card__kind--soon{border-color:var(--line)!important; color:var(--mute); background:none!important}
+
+  /* ---------- Project detail panel ---------- */
+  .detail{position:fixed; inset:0; z-index:80; pointer-events:none}
+  .detail.open{pointer-events:auto}
+  .detail__scrim{position:absolute; inset:0; background:rgba(17,17,17,.32); opacity:0; transition:opacity .5s}
+  .detail.open .detail__scrim{opacity:1}
+  .detail__panel{
+    position:absolute; top:0; right:0; bottom:0; width:min(780px,100%); background:#fff; overflow-y:auto; overscroll-behavior:contain;
+    transform:translateX(100%); transition:transform .7s var(--ease); padding:0 clamp(20px,3.2vw,48px) 72px;
+    word-break:keep-all;
+  }
+  .detail.open .detail__panel{transform:none}
+  .detail__bar{position:sticky; top:0; z-index:2; display:flex; justify-content:space-between; align-items:center; padding:18px 0 14px; background:#fff; font-size:13px; color:var(--mute)}
+  .detail__close{background:none; border:1px solid var(--ink); border-radius:999px; padding:7px 14px; font:inherit; font-size:13px; color:var(--ink); cursor:pointer}
+  .detail__close:hover{background:var(--ink); color:#fff}
+  .d-title{font-family:"Inter",sans-serif; font-weight:600; font-size:clamp(32px,4.2vw,56px); line-height:1.02; letter-spacing:-.01em; margin-top:18px}
+  .d-desc{margin-top:14px; font-family:"Pretendard Variable",Pretendard,sans-serif; font-size:clamp(16px,1.3vw,18px); line-height:1.6; letter-spacing:-.02em; color:var(--ink-2)}
+  .d-media{position:relative; aspect-ratio:742/558; overflow:hidden; margin-top:28px; background:var(--ph)}
+  .d-media .card__img{inset:0; transform:none!important}
+  .d-sec{margin-top:48px}
+  .d-sec h4{font-size:12px; font-weight:500; letter-spacing:.04em; text-transform:uppercase; color:var(--mute); padding-bottom:10px; border-bottom:1px solid var(--ink)}
+  .d-info div{display:grid; grid-template-columns:110px 1fr; gap:16px; padding:13px 0; border-bottom:1px solid var(--line); font-family:"Pretendard Variable",Pretendard,sans-serif; font-size:15px; line-height:1.55; letter-spacing:-.02em}
+  .d-info dt{color:var(--mute)}
+  .d-text{margin-top:16px; font-family:"Pretendard Variable",Pretendard,sans-serif; font-size:15px; line-height:1.75; letter-spacing:-.02em; color:var(--ink-2)}
+  .d-tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+  .d-tags span{font-size:13px; padding:6px 12px; border-radius:999px; background:#F2F2F3}
+  .d-steps{list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:0 28px; margin-top:4px}
+  .d-steps li{padding:18px 0; border-bottom:1px solid var(--line); font-family:"Pretendard Variable",Pretendard,sans-serif; letter-spacing:-.02em}
+  .d-steps b{display:block; font-family:"Inter",sans-serif; font-weight:500; font-size:12px; color:var(--mute); margin-bottom:8px; font-variant-numeric:tabular-nums}
+  .d-steps strong{display:block; font-size:16px; font-weight:600; margin-bottom:6px}
+  .d-steps p{font-size:14px; line-height:1.65; color:var(--ink-2)}
+  .d-cta{display:flex; flex-wrap:wrap; gap:10px; margin-top:44px}
+  .d-cta a{display:inline-flex; align-items:center; gap:8px; padding:13px 20px; border-radius:999px; font-size:14px; border:1px solid var(--ink); transition:background .3s, color .3s}
+  .d-cta a:first-child{background:var(--ink); color:#fff}
+  .d-cta a:hover{background:#fff; color:var(--ink)}
+  .d-cta a:first-child:hover{background:#333; color:#fff}
+  @media (max-width:720px){ .d-steps{grid-template-columns:1fr} .d-info div{grid-template-columns:84px 1fr} }
+
   .card__meta{
     position:relative; margin-top:clamp(18px,2vw,28px); padding-top:8px;
     display:flex; justify-content:space-between; align-items:flex-end; font-size:14px; line-height:1.3;
@@ -170,7 +216,7 @@
 
   /* ---------- About ---------- */
   .about{
-    padding:clamp(160px, 18vw, 260px) var(--pad) 0;
+    padding:clamp(100px, 11vw, 170px) var(--pad) 0;
     display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:40px;
   }
   .about__title{
@@ -254,68 +300,10 @@
       <span class="line-mask"><span class="intro-line">Yehyun Seo</span></span>
       <span class="line-mask"><span class="intro-line">UI/UX &amp; BX Design</span></span>
     </p>
-    <p class="hero__lede">브랜드의 개성을 사용하기 쉬운 디지털 경험으로 연결합니다.</p>
-    <h1 class="hero__title skew prox" aria-label="Things I make">
-      <span class="line-mask"><span class="split">Things</span></span>
-      <span class="line-mask"><span class="split">I Make</span></span>
+    <p class="hero__lede">의도치 않은 발견으로 새로운 가능성을 만들어갑니다.</p>
+    <h1 class="hero__title skew prox" aria-label="Works">
+      <span class="line-mask"><span class="split">Works</span></span>
     </h1>
-  </section>
-
-  <section class="work" id="work">
-    <a class="card" href="https://seoul-grand-park-rho.vercel.app/?from=portfolio" data-cursor="view" data-label="Case study">
-      <div class="card__media"><div class="card__img card__img--photo">
-        <img src="images/seoul-grand-park.jpg" alt="Seoul Grand Park app renewal — mood board">
-      </div></div>
-      <div class="card__meta">
-        <div class="card__info">
-          <span class="card__title">Seoul Grand Park</span>
-          <p class="card__desc">길찾기와 예약 접근성을 개선한 서울대공원 앱 리디자인</p>
-          <span class="sub">UI/UX · App Renewal / 2026 — 개인 프로젝트 · UI/UX 100%</span>
-        </div>
-        <div class="card__side"><span class="card__kind card__kind--case">Case study →</span><span class="card__num">01</span></div>
-      </div>
-    </a>
-    <a class="card" href="https://momakers.vercel.app/?from=portfolio" data-cursor="view" data-label="Live ↗">
-      <div class="card__media"><div class="card__img card__img--cover">
-        <img src="images/momakers.jpg" alt="MoMakers film studio website — manifesto and film stills">
-      </div></div>
-      <div class="card__meta">
-        <div class="card__info">
-          <span class="card__title">MoMakers</span>
-          <p class="card__desc">독립영화 제작사의 개성을 담은 웹사이트</p>
-          <span class="sub">Web · Film Production Studio / 2026 — 개인 프로젝트 · 기획 / 디자인 / 구현</span>
-        </div>
-        <div class="card__side"><span class="card__kind card__kind--live">Live site ↗</span><span class="card__num">02</span></div>
-      </div>
-    </a>
-    <a class="card" href="https://vessel-psi-vert.vercel.app/?from=portfolio" data-cursor="view" data-label="Live ↗">
-      <div class="card__media"><div class="card__img card__img--vessel">
-        <img src="images/vessel/02-perfume.webp" alt="">
-        <img src="images/vessel/01-vase.webp" alt="VESSEL poster — vase">
-        <img src="images/vessel/03-wine.webp" alt="">
-      </div></div>
-      <div class="card__meta">
-        <div class="card__info">
-          <span class="card__title">VESSEL</span>
-          <p class="card__desc">유리 오브제 포스터 시리즈와 이를 담은 에디토리얼 웹 아카이브</p>
-          <span class="sub">BX · Poster Series & Web / 2026 — 개인 프로젝트 · 포스터 / 웹 기획·디자인·구현</span>
-        </div>
-        <div class="card__side"><span class="card__kind card__kind--live">Live site ↗</span><span class="card__num">03</span></div>
-      </div>
-    </a>
-    <a class="card" href="https://visual-communication-kappa.vercel.app/?from=portfolio" data-cursor="view" data-label="Live ↗">
-      <div class="card__media"><div class="card__img card__img--type">
-        <img src="images/visual-communication.jpg" alt="Visual Communication Archive — Helvetica type study">
-      </div></div>
-      <div class="card__meta">
-        <div class="card__info">
-          <span class="card__title">Visual Communication</span>
-          <p class="card__desc">비주얼 커뮤니케이션 수업 과제를 정리한 인터랙티브 웹 아카이브</p>
-          <span class="sub">Web · Class Archive / 2026 — 수업 과제 · 개인 작업 · 아카이브 디자인 / 구현</span>
-        </div>
-        <div class="card__side"><span class="card__kind card__kind--live">Live site ↗</span><span class="card__num">04</span></div>
-      </div>
-    </a>
   </section>
 
   <section class="about" id="about">
@@ -335,6 +323,11 @@
     </div>
   </section>
 
+  <section class="works" id="work">
+    <div class="works__head"><span>Projects</span><span class="works__count"></span></div>
+    <div class="work" id="workGrid"></div>
+  </section>
+
   <section class="contact" id="contact">
     <h2 class="split-roll">Contact</h2>
     <a href="mailto:yehyun0107@naver.com" class="magnet copy" data-copy="yehyun0107@naver.com" data-cursor="link">yehyun0107@naver.com<i class="u"></i></a>
@@ -352,6 +345,14 @@
   <div class="rule"></div>
 </footer>
 
+<div class="detail" aria-hidden="true">
+  <div class="detail__scrim"></div>
+  <aside class="detail__panel" role="dialog" aria-modal="true" aria-label="Project details" data-lenis-prevent>
+    <div class="detail__bar"><span class="detail__count"></span><button class="detail__close" type="button">Close ✕</button></div>
+    <div class="detail__body"></div>
+  </aside>
+</div>
+
 <div class="toast" role="status" aria-live="polite">Copied to clipboard</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -360,6 +361,107 @@
 <script>
 (() => {
   gsap.registerPlugin(ScrollTrigger);
+
+  /* ---------- projects ----------
+     info keys (shown in this order, empty ones are skipped):
+     medium 매체 · content 작업 내용 · period 제작 기간 · scope 작업 범위 · contribution 기여도 · tools 사용 툴 · source 자료 출처
+     concept: { text, keywords[] } · process: [{ title, text }] · links: [{ label, href }] */
+  const PROJECTS = [
+    { id: 'seoul-grand-park', title: 'Seoul Grand Park', field: 'UI/UX · App Renewal / 2026',
+      desc: '길찾기와 예약 접근성을 개선한 서울대공원 앱 리디자인',
+      media: '<div class="card__img card__img--photo"><img src="images/seoul-grand-park.jpg" alt="Seoul Grand Park app renewal — mood board"></div>',
+      info: { medium: 'App · 모바일 UI/UX', content: '공원 길찾기와 예매 동선을 중심으로 한 서울대공원 앱 서비스 리디자인',
+              period: '2026', scope: '개인 프로젝트 · UI/UX 100%' },
+      links: [{ label: '케이스 스터디 보기 ↗', href: 'https://seoul-grand-park-rho.vercel.app/?from=portfolio' }] },
+    { id: 'momakers', title: 'MoMakers', field: 'Web · Film Production Studio / 2026',
+      desc: '독립영화 제작사의 개성을 담은 웹사이트',
+      media: '<div class="card__img card__img--cover"><img src="images/momakers.jpg" alt="MoMakers film studio website — manifesto and film stills"></div>',
+      info: { medium: 'Web', content: '독립영화 제작사의 작품 라인업과 철학을 소개하는 웹사이트',
+              period: '2026', scope: '개인 프로젝트 · 기획 / 디자인 / 구현' },
+      links: [{ label: '라이브 사이트 ↗', href: 'https://momakers.vercel.app/?from=portfolio' }] },
+    { id: 'vessel', title: 'VESSEL', field: 'BX · Poster Series & Web / 2026',
+      desc: '유리 오브제 포스터 시리즈와 이를 담은 에디토리얼 웹 아카이브',
+      media: '<div class="card__img card__img--vessel"><img src="images/vessel/02-perfume.webp" alt=""><img src="images/vessel/01-vase.webp" alt="VESSEL poster — vase"><img src="images/vessel/03-wine.webp" alt=""></div>',
+      info: { medium: 'Poster · Web', content: '화병·향수병·와인잔·유리컵·어항, 다섯 가지 유리 오브제 포스터와 이를 소개하는 웹 아카이브',
+              period: '2026', scope: '개인 프로젝트 · 포스터 / 웹 기획·디자인·구현' },
+      links: [{ label: '라이브 사이트 ↗', href: 'https://vessel-psi-vert.vercel.app/?from=portfolio' }] },
+    { id: 'typography-essay-en', title: 'Typography Essay Web (EN)', field: 'Visual Communication · Web / 2026',
+      desc: '서체의 형태·자간·크기를 탐구한 타이포그래피 에세이 웹',
+      media: '<div class="card__img card__img--type"><img src="images/visual-communication.jpg" alt="Typography essay web — Helvetica type study"></div>',
+      info: { medium: 'Web', content: 'Helvetica와 Freesentation을 비교하며 서체꼴·자간과 행간·크기와 무게를 다룬 타이포그래피 에세이',
+              period: '2026', scope: '비주얼 커뮤니케이션 수업 과제 · 개인 작업 · 디자인 / 구현' },
+      links: [{ label: '라이브 사이트 ↗', href: 'https://visual-communication-kappa.vercel.app/?from=portfolio' }] },
+    { id: 'typography-essay-kr', soon: true, title: 'Typography Essay Web (KR)', field: 'Visual Communication · Web / 2026',
+      desc: '타이포그래피 에세이 웹의 한국어판' },
+    { id: 'capstone', soon: true, title: 'Capstone Design', field: 'Graduation Project / 2026',
+      desc: '캡스톤디자인 성과물로 진행하는 졸업작품' },
+    { id: 'digital-content', soon: true, title: 'Digital Content', field: 'Contest Entry / 2026',
+      desc: '디지털콘텐츠 제작 수업에서 진행한 공모전 출품작' },
+    { id: 'interaction-design', soon: true, title: 'Interaction Design', field: 'Class Project / 2026',
+      desc: '인터랙션디자인 수업 중간·기말 과제' },
+    { id: 'experience-design', soon: true, title: 'Experience Design', field: 'Class Project / 2026',
+      desc: '경험디자인 수업 중간·기말 과제' },
+  ];
+  const INFO_LABELS = [['medium', '매체'], ['content', '작업 내용'], ['period', '제작 기간'], ['scope', '작업 범위'],
+    ['contribution', '기여도'], ['tools', '사용 툴'], ['source', '자료 출처']];
+
+  document.getElementById('workGrid').innerHTML = PROJECTS.map((p, i) => {
+    const n = String(i + 1).padStart(2, '0');
+    const head = p.soon
+      ? `<div class="card card--soon" aria-disabled="true">`
+      : `<a class="card" href="#${p.id}" data-id="${p.id}" data-cursor="view" data-label="Details">`;
+    const media = p.soon ? '<div class="card__img card__img--soon"><span>Coming soon</span></div>' : p.media;
+    const kind = p.soon ? '<span class="card__kind card__kind--soon">Coming soon</span>' : '<span class="card__kind">Details +</span>';
+    return `${head}
+      <div class="card__media">${media}</div>
+      <div class="card__meta">
+        <div class="card__info">
+          <span class="card__title">${p.title}</span>
+          <p class="card__desc">${p.desc}</p>
+          <span class="sub">${p.field}</span>
+        </div>
+        <div class="card__side">${kind}<span class="card__num">${n}</span></div>
+      </div>
+    ${p.soon ? '</div>' : '</a>'}`;
+  }).join('');
+  document.querySelector('.works__count').textContent = String(PROJECTS.length).padStart(2, '0');
+
+  const detail = document.querySelector('.detail'), panel = detail.querySelector('.detail__panel'), body = detail.querySelector('.detail__body');
+  const openDetail = id => {
+    const p = PROJECTS.find(x => x.id === id);
+    if (!p || p.soon) return;
+    const info = INFO_LABELS.filter(([k]) => p.info && p.info[k]).map(([k, l]) => `<div><dt>${l}</dt><dd>${p.info[k]}</dd></div>`).join('');
+    const concept = p.concept ? `<section class="d-sec"><h4>Design concept</h4><p class="d-text">${p.concept.text || ''}</p>
+      ${p.concept.keywords ? `<div class="d-tags">${p.concept.keywords.map(k => `<span>${k}</span>`).join('')}</div>` : ''}</section>` : '';
+    const process = p.process ? `<section class="d-sec"><h4>Process</h4><ol class="d-steps">${p.process.map((st, i) =>
+      `<li><b>${String(i + 1).padStart(2, '0')}</b><strong>${st.title}</strong><p>${st.text}</p></li>`).join('')}</ol></section>` : '';
+    const links = (p.links || []).map(l => `<a href="${l.href}" class="d-out">${l.label}</a>`).join('');
+    body.innerHTML = `
+      <h3 class="d-title">${p.title}</h3>
+      <p class="d-desc">${p.desc}</p>
+      <div class="d-media">${p.media}</div>
+      <section class="d-sec"><h4>Project info</h4><dl class="d-info">${info}</dl></section>
+      ${concept}${process}
+      <div class="d-cta">${links}</div>`;
+    detail.querySelector('.detail__count').textContent = p.field;
+    body.querySelectorAll('.d-out').forEach(a => a.addEventListener('click', () => {
+      try { sessionStorage.setItem('pf-return', scrollY); } catch (_) {}
+    }));
+    panel.scrollTop = 0;
+    detail.classList.add('open');
+    detail.setAttribute('aria-hidden', 'false');
+    lenis && lenis.stop();
+  };
+  const closeDetail = () => {
+    detail.classList.remove('open');
+    detail.setAttribute('aria-hidden', 'true');
+    lenis && lenis.start();
+  };
+  detail.querySelector('.detail__scrim').addEventListener('click', closeDetail);
+  detail.querySelector('.detail__close').addEventListener('click', closeDetail);
+  addEventListener('keydown', e => { if (e.key === 'Escape' && detail.classList.contains('open')) closeDetail(); });
+  document.querySelectorAll('a.card').forEach(c => c.addEventListener('click', e => { e.preventDefault(); openDetail(c.dataset.id); }));
+
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
 
@@ -376,11 +478,11 @@
   });
 
   /* ---------- smooth scroll ---------- */
-  const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+  var lenis = new Lenis({ duration: 1.15, smoothWheel: true });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(t => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
-  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+  document.querySelectorAll('a[href^="#"]:not(.card)').forEach(a => a.addEventListener('click', e => {
     const id = a.getAttribute('href');
     if (id.length < 2) return;
     e.preventDefault();
@@ -437,8 +539,6 @@
       img.style.setProperty('--mx', x * 100 + '%');
       img.style.setProperty('--my', y * 100 + '%');
     });
-    if (card.getAttribute('href') === '#') card.addEventListener('click', e => e.preventDefault());
-    else card.addEventListener('click', () => { try { sessionStorage.setItem('pf-return', scrollY); } catch (_) {} });
   });
 
   /* ---------- about headline reveal ---------- */
